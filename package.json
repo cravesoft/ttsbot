@@ -1,0 +1,9 @@
+{
+    "name": "ttsbot"
+  , "version": "1.0"
+  , "private": false 
+  , "dependencies": {
+    "irc": ">0"
+    , "request": ">0"
+  }
+}
