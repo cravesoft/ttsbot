@@ -1,7 +1,7 @@
 {
     "sopr_host": "localhost",
     "sopr_ports": {
-        "en-US": 1330,  
+        "en-US": 1330,
         "ar-XA": 1331,
         "cs-CZ": 1332,
         "da-DK": 1333,
