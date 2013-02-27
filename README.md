@@ -41,4 +41,4 @@ Open `./server/config.json` in a text editor and fill in your server information
 
 # Done!
 
-Then run `node server/js/ttsbot.js` in order to start the server.
+Then run `node server/js/ttsbot.js` in order to start the server and `liquidsoap ls_script.liq` to start the stream generator.
