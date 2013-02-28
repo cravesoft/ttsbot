@@ -38,7 +38,7 @@ function main(config) {
             // Ignore messages sent to bot
             return;
         }
-        if(message.match(/^!tts [a-z]{2}-[A-Z]{2}/i)) {
+        if(message.match(/^!tts [a-z]{2}-[A-Z]{2}$/i)) {
             // Change user language
             lang = message.match(/[a-z]{2}-[A-Z]{2}/i)[0];
             if(lang in config.sopr_ports) {
