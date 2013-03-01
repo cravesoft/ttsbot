@@ -12,7 +12,7 @@ function main(config) {
         credentials = false,
         sopr_url = 'http://' + config.sopr_host + ':%d/synth?text=%s&path=%s',
         sox_command = 'sox -t raw -r 16000 -e signed -b 16 -c 1 %s %s channels 2', 
-        langs = {};
+        users = {};
     if(config.secure) {
         var crypto = require("crypto"),
             key = fs.readFileSync(config.ssl_key, 'ascii'),
@@ -38,19 +38,36 @@ function main(config) {
             // Ignore messages sent to bot
             return;
         }
+        var user = users[from];
         if(message.match(/^!tts [a-z]{2}-[A-Z]{2}$/i)) {
             // Change user language
             lang = message.match(/[a-z]{2}-[A-Z]{2}/i)[0];
             if(lang in config.sopr_ports) {
-                langs[from] = lang;
-                console.log('%s is given voice %s', from, langs[from]);
+                user['lang'] = lang;
+                console.log('%s is given voice %s', from, user['lang']);
             }
+        } else if(message.match(/^!tts pitch \d+$/i)) {
+            // Change user pitch
+            pitch = message.match(/\d+/i)[0];
+            user['pitch'] = pitch;
+            console.log('%s is given speed %d', from, user['pitch']);
+        } else if(message.match(/^!tts speed \d+$/i)) {
+            // Change user speed
+            speed = message.match(/\d+/i)[0];
+            user['speed'] = speed;
+            console.log('%s is given speed %d', from, user['speed']);
+        } else if(message.match(/^!tts volume \d+$/i)) {
+            // Change user volume
+            volume = message.match(/\d+/i)[0];
+            user['volume'] = volume;
+            console.log('%s is given volume %d', from, user['volume']);
         } else {
             var ts = Date.now() / 1000,
                 pcmPath = config.playlist_path + '/' + ts + '.pcm',
                 wavPath = config.playlist_path + '/' + ts + '.wav',
-                port = config.sopr_ports[langs[from]],
+                port = config.sopr_ports[user['lang']],
                 text = urlify(message);
+                text = addMarkup(text, user);
             // Synthesize text
             request.post(
                 util.format(sopr_url, port, text, pcmPath),
@@ -91,34 +108,51 @@ function main(config) {
     bot.addListener('pm', function(nick, message) {
         console.log('Got private message from %s: %s', nick, message);
     });
-    bot.addListener('join', function(channel, who) {
-        console.log('%s has joined %s', who, channel);
-        if(!(who in langs) && who != config.irc_bot_name) {
-            langs[who] = getDefaultLanguage();
-            console.log('%s is given voice %s', who, langs[who]);
+    bot.addListener('join', function(channel, nick) {
+        console.log('%s has joined %s', nick, channel);
+        if(!(nick in users) && nick != config.irc_bot_name) {
+            addUser(nick);
         }
     });
-    bot.addListener('part', function(channel, who, reason) {
-        console.log('%s has left %s: %s', who, channel, reason);
+    bot.addListener('part', function(channel, nick, reason) {
+        console.log('%s has left %s: %s', nick, channel, reason);
     });
-    bot.addListener('kick', function(channel, who, by, reason) {
-        console.log('%s was kicked from %s by %s: %s', who, channel, by, reason);
+    bot.addListener('kick', function(channel, nick, by, reason) {
+        console.log('%s was kicked from %s by %s: %s', nick, channel, by, reason);
     });
     bot.addListener('names', function(channel, nicks) {
         Object.keys(nicks).forEach(function(nick) {
             if(nick != config.irc_bot_name) {
-                langs[nick] = getDefaultLanguage();
-                console.log('%s is given voice %s', nick, langs[nick]);
+                addUser(nick);
             }
         });
     });
+    function addUser(nick) {
+        var user = {
+            'lang': getDefaultLanguage(),
+            'pitch': config.user_default_pitch,
+            'speed': config.user_default_speed,
+            'volume': config.user_default_volume
+        };
+        console.log('%s is given voice %s', nick, user['lang']);
+        console.log('%s is given pitch %s', nick, user['pitch']);
+        console.log('%s is given speed %s', nick, user['speed']);
+        console.log('%s is given volume %s', nick, user['volume']);
+        users[nick] = user;
+    }
     function getDefaultLanguage() {
-        if(config.default_language) {
-            return config.default_language;
+        if(config.user_default_language) {
+            return config.user_default_language;
         } else {
             var k = Math.floor(Math.random()*Object.keys(config.sopr_ports).length);
             return Object.keys(config.sopr_ports)[k];
         }
+    }
+    function addMarkup(text, user) {
+        text = util.format('<pitch level="%d">%s</pitch>', user['pitch'], text);
+        text = util.format('<volume level="%d">%s</volume>', user['volume'], text);
+        text = util.format('<speed level="%d">%s</speed>', user['speed'], text);
+        return text;
     }
 }
 
