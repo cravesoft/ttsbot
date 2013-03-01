@@ -24,7 +24,10 @@
         "tr-TR": 1350,
         "zh-CN": 1351
     },
-    "default_language": false,
+    "user_default_language": false,
+    "user_default_pitch": 100,
+    "user_default_speed": 100,
+    "user_default_volume": 100,
     "irc_host": "localhost",
     "irc_port": "6667",
     "irc_bot_name": "tts",
