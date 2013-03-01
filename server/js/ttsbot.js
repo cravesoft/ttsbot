@@ -94,8 +94,7 @@ function main(config) {
     bot.addListener('join', function(channel, who) {
         console.log('%s has joined %s', who, channel);
         if(!(who in langs) && who != config.irc_bot_name) {
-            var k = Math.floor(Math.random()*Object.keys(config.sopr_ports).length);
-            langs[who] = Object.keys(config.sopr_ports)[k];
+            langs[who] = getDefaultLanguage();
             console.log('%s is given voice %s', who, langs[who]);
         }
     });
@@ -108,12 +107,19 @@ function main(config) {
     bot.addListener('names', function(channel, nicks) {
         Object.keys(nicks).forEach(function(nick) {
             if(nick != config.irc_bot_name) {
-                var k = Math.floor(Math.random()*Object.keys(config.sopr_ports).length);
-                langs[nick] = Object.keys(config.sopr_ports)[k];
+                langs[nick] = getDefaultLanguage();
                 console.log('%s is given voice %s', nick, langs[nick]);
             }
         });
     });
+    function getDefaultLanguage() {
+        if(config.default_language) {
+            return config.default_language;
+        } else {
+            var k = Math.floor(Math.random()*Object.keys(config.sopr_ports).length);
+            return Object.keys(config.sopr_ports)[k];
+        }
+    }
 }
 
 function urlify(text) {
