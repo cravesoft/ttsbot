@@ -8,9 +8,10 @@ function main(config) {
         net = require('net'),
         util = require('util'),
         request = require('request'),
+        qs = require('querystring'),
         exec  = require('child_process').exec,
         credentials = false,
-        sopr_url = 'http://' + config.sopr_host + ':%d/synth?text=%s&path=%s',
+        sopr_url = 'http://' + config.sopr_host + ':%d/synth?%s',
         sox_command = 'sox -t raw -r 16000 -e signed -b 16 -c 1 %s %s channels 2', 
         users = {};
     if(config.secure) {
@@ -133,7 +134,7 @@ function main(config) {
             text = addMarkup(text, user);
         // Synthesize text
         request.post(
-            util.format(sopr_url, port, text, pcmPath),
+            util.format(sopr_url, port, qs.stringify({ text: text, path: pcmPath })),
             function(error, response, body) {
                 if(!error && response.statusCode == 200) {
                     console.log('%s was synthesized in %s', text, pcmPath);
