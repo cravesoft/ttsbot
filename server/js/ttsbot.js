@@ -36,28 +36,33 @@ function main(config) {
     });
     bot.addListener('message#', function(from, to, message) {
         var user = users[from];
-        if(message.match(/^!tts [a-z]{2}-[A-Z]{2}$/i)) {
-            // Change user language
-            lang = message.match(/[a-z]{2}-[A-Z]{2}/i)[0];
-            if(lang in config.sopr_ports) {
-                user.lang = lang;
-                console.log('%s is given voice %s', from, user.lang);
+        if(message.match(/^!tts .*$/i)) {
+            if(message.match(/^!tts [a-z]{2}-[A-Z]{2}$/i)) {
+                // Change user language
+                lang = message.match(/[a-z]{2}-[A-Z]{2}/i)[0];
+                if(lang in config.sopr_ports) {
+                    user.lang = lang;
+                    console.log('%s is given voice %s', from, user.lang);
+                }
+            } else if(message.match(/^!tts pitch \d+$/i)) {
+                // Change user pitch
+                pitch = message.match(/\d+/i)[0];
+                user.pitch = pitch;
+                console.log('%s is given pitch %d', from, user.pitch);
+            } else if(message.match(/^!tts speed \d+$/i)) {
+                // Change user speed
+                speed = message.match(/\d+/i)[0];
+                user.speed = speed;
+                console.log('%s is given speed %d', from, user.speed);
+            } else if(message.match(/^!tts volume \d+$/i)) {
+                // Change user volume
+                volume = message.match(/\d+/i)[0];
+                user.volume = volume;
+                console.log('%s is given volume %d', from, user.volume);
+            } else if(message.match(/^!tts help$/i)) {
+                // Print help
+                bot.say(config.irc_channel_name, "Converts logs into speech and broadcast them as an audio stream.\nUsage: `!tts [ en-US | ar-XA | cs-CZ | da-DK | de-DE | en-AU | en-GB | es-ES | es-M X |fr-CA | fr-FR | it-IT | ja-JP | ko-KR | nl-NL | pl-PL | pt-BR | pt-PT | ru-RU | sv-SE | tr-TR | zh-CN ]`; `!tts pitch [50-200]`; `!tts speed [20-200]`; `!tts volume [0-100]`.");
             }
-        } else if(message.match(/^!tts pitch \d+$/i)) {
-            // Change user pitch
-            pitch = message.match(/\d+/i)[0];
-            user.pitch = pitch;
-            console.log('%s is given pitch %d', from, user.pitch);
-        } else if(message.match(/^!tts speed \d+$/i)) {
-            // Change user speed
-            speed = message.match(/\d+/i)[0];
-            user.speed = speed;
-            console.log('%s is given speed %d', from, user.speed);
-        } else if(message.match(/^!tts volume \d+$/i)) {
-            // Change user volume
-            volume = message.match(/\d+/i)[0];
-            user.volume = volume;
-            console.log('%s is given volume %d', from, user.volume);
         } else {
             // Play the message sent by this user
             playText(message, user);
