@@ -33,11 +33,7 @@ function main(config) {
     bot.addListener('error', function(message) {
         console.error('ERROR: %s: %s', message.command, message.args.join(' '));
     });
-    bot.addListener('message', function(from, to, message) {
-        if(config.irc_bot_name == to) {
-            // Ignore messages sent to bot
-            return;
-        }
+    bot.addListener('message#', function(from, to, message) {
         var user = users[from];
         if(message.match(/^!tts [a-z]{2}-[A-Z]{2}$/i)) {
             // Change user language
