@@ -106,7 +106,13 @@ function main(config) {
     });
     bot.addListener('join', function(channel, nick) {
         console.log('%s has joined %s', nick, channel);
-        if(!(nick in users) && nick != config.irc_bot_name) {
+        if(config.irc_bot_name == nick) {
+            var address = util.format("http://%s:%d/%s",
+                config.radio_host, config.radio_port, config.radio_mount);
+            bot.action(channel, 'streaming at ' + address);
+            return;
+        }
+        if(!(nick in users)) {
             addUser(nick);
         }
     });
