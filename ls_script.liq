@@ -30,4 +30,4 @@ output.icecast(%mp3,
   mount="radio.mp3",timeout=1.,radio)
 
 # Output the source's stream to an ALSA output device
-#output.alsa(bufferize = false,radio)
+#output.alsa(bufferize=false,radio)
