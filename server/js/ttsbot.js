@@ -43,29 +43,29 @@ function main(config) {
             // Change user language
             lang = message.match(/[a-z]{2}-[A-Z]{2}/i)[0];
             if(lang in config.sopr_ports) {
-                user['lang'] = lang;
-                console.log('%s is given voice %s', from, user['lang']);
+                user.lang = lang;
+                console.log('%s is given voice %s', from, user.lang);
             }
         } else if(message.match(/^!tts pitch \d+$/i)) {
             // Change user pitch
             pitch = message.match(/\d+/i)[0];
-            user['pitch'] = pitch;
-            console.log('%s is given speed %d', from, user['pitch']);
+            user.pitch = pitch;
+            console.log('%s is given pitch %d', from, user.pitch);
         } else if(message.match(/^!tts speed \d+$/i)) {
             // Change user speed
             speed = message.match(/\d+/i)[0];
-            user['speed'] = speed;
-            console.log('%s is given speed %d', from, user['speed']);
+            user.speed = speed;
+            console.log('%s is given speed %d', from, user.speed);
         } else if(message.match(/^!tts volume \d+$/i)) {
             // Change user volume
             volume = message.match(/\d+/i)[0];
-            user['volume'] = volume;
-            console.log('%s is given volume %d', from, user['volume']);
+            user.volume = volume;
+            console.log('%s is given volume %d', from, user.volume);
         } else {
             var ts = Date.now() / 1000,
                 pcmPath = config.playlist_path + '/' + ts + '.pcm',
                 wavPath = config.playlist_path + '/' + ts + '.wav',
-                port = config.sopr_ports[user['lang']],
+                port = config.sopr_ports[user.lang],
                 text = urlify(message);
                 text = addMarkup(text, user);
             // Synthesize text
@@ -134,10 +134,10 @@ function main(config) {
             'speed': config.user_default_speed,
             'volume': config.user_default_volume
         };
-        console.log('%s is given voice %s', nick, user['lang']);
-        console.log('%s is given pitch %s', nick, user['pitch']);
-        console.log('%s is given speed %s', nick, user['speed']);
-        console.log('%s is given volume %s', nick, user['volume']);
+        console.log('%s is given voice %s', nick, user.lang);
+        console.log('%s is given pitch %s', nick, user.pitch);
+        console.log('%s is given speed %s', nick, user.speed);
+        console.log('%s is given volume %s', nick, user.volume);
         users[nick] = user;
     }
     function getDefaultLanguage() {
@@ -149,9 +149,9 @@ function main(config) {
         }
     }
     function addMarkup(text, user) {
-        text = util.format('<pitch level="%d">%s</pitch>', user['pitch'], text);
-        text = util.format('<volume level="%d">%s</volume>', user['volume'], text);
-        text = util.format('<speed level="%d">%s</speed>', user['speed'], text);
+        text = util.format('<pitch level="%d">%s</pitch>', user.pitch, text);
+        text = util.format('<volume level="%d">%s</volume>', user.volume, text);
+        text = util.format('<speed level="%d">%s</speed>', user.speed, text);
         return text;
     }
 }

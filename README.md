@@ -37,7 +37,7 @@ All of them can be installed via `npm install -d` (this will install a local cop
 
 Rename the [`server/config-sample.json`](./server/config-sample.json) file to `./server/config.json`
 
-Open `./server/config.json` in a text editor and fill in your server information
+Open `./server/config.json` in a text editor and fill in your server information.
 
 In a TLS/SSL infrastructure, each client and each server must have a private key. A private key is created like this
 
