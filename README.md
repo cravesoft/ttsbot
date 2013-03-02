@@ -7,7 +7,7 @@ This bot is based on undisclosed proprietary software.
 
 This IRC bot converts logs into speech and broadcast them as an audio stream.
 
-Available commands:
+## Available commands
 
 * `!tts help`:
     * display the list of available commands
@@ -18,7 +18,7 @@ Available commands:
     * set the pitch of speech for the IRC user who issued the command
 * `!tts speed [20-200]`:
     * set the speed of speech for the IRC user who issued the command
-* `!tts volume [0-100]]`:
+* `!tts volume [0-100]`:
     * set the volume of speech for the IRC user who issued the command
 
 # Installation 
