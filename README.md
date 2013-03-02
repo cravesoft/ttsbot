@@ -11,16 +11,13 @@ Available commands:
 
 * `!tts help`:
     * display the list of available commands
-
-* `!tts [ en-US | ar-XA | cs-CZ | da-DK | de-DE | en-AU | en-GB | es-ES | es-M X |fr-CA | fr-FR | it-IT | ja-JP | ko-KR | nl-NL | pl-PL | pt-BR | pt-PT | ru-RU | sv-SE | tr-TR | zh-CN ]`:
+* `!tts [ en-US | ar-XA | cs-CZ | da-DK | de-DE | en-AU | en-GB | es-ES | es-M X |fr-CA | fr-FR | `
+  `it-IT | ja-JP | ko-KR | nl-NL | pl-PL | pt-BR | pt-PT | ru-RU | sv-SE | tr-TR | zh-CN ]`:
     * set the language for the IRC user who issued the command
-
 * `!tts pitch [50-200]`:
     * set the pitch of speech for the IRC user who issued the command
-
 * `!tts speed [20-200]`:
     * set the speed of speech for the IRC user who issued the command
-
 * `!tts volume [0-100]]`:
     * set the volume of speech for the IRC user who issued the command
 
