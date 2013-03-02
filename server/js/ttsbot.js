@@ -58,47 +58,15 @@ function main(config) {
             user.volume = volume;
             console.log('%s is given volume %d', from, user.volume);
         } else {
-            var ts = Date.now() / 1000,
-                pcmPath = config.playlist_path + '/' + ts + '.pcm',
-                wavPath = config.playlist_path + '/' + ts + '.wav',
-                port = config.sopr_ports[user.lang],
-                text = urlify(message);
-                text = addMarkup(text, user);
-            // Synthesize text
-            request.post(
-                util.format(sopr_url, port, text, pcmPath),
-                function(error, response, body) {
-                    if(!error && response.statusCode == 200) {
-                        console.log('%s was synthesized in %s', text, pcmPath);
-                        // Convert PCM to WAV
-                        exec(util.format(sox_command, pcmPath, wavPath), 
-                        function(error, stdout, stderr) {
-                            console.log('%s was converted to %s', wavPath, pcmPath);
-                            if(error !== null) {
-                                console.log('ERROR: %s', error);
-                            } else {
-                                // Push file into queue
-                                var client = net.connect( {
-                                    port: config.ls_telnet_port,
-                                    host: config.ls_telnet_host
-                                }, function() {
-                                    console.log('Connected to telnet client');
-                                    client.write('request.push ' + wavPath + '\n', function() {
-                                        client.end();
-                                    });
-                                });
-                                client.on('data', function(data) {
-                                    //console.log('Received %s from telnet server', data.toString());
-                                    client.end();
-                                });
-                                client.on('end', function() {
-                                    console.log('Disconnected from telnet client');
-                                });
-                            }
-                        });
-                    }
-                }
-            );
+            // Play the message sent by this user
+            playText(message, user);
+        }
+    });
+    bot.addListener('topic', function(channel, topic, nick, message) {
+        if('TOPIC' == message.rawCommand) {
+            var user = users[nick];
+            console.log('%s changed the topic to %s', nick, topic);
+            playText(topic, user);
         }
     });
     bot.addListener('pm', function(nick, message) {
@@ -155,6 +123,49 @@ function main(config) {
         text = util.format('<volume level="%d">%s</volume>', user.volume, text);
         text = util.format('<speed level="%d">%s</speed>', user.speed, text);
         return text;
+    }
+    function playText(message, user) {
+        var ts = Date.now() / 1000,
+            pcmPath = config.playlist_path + '/' + ts + '.pcm',
+            wavPath = config.playlist_path + '/' + ts + '.wav',
+            port = config.sopr_ports[user.lang],
+            text = urlify(message);
+            text = addMarkup(text, user);
+        // Synthesize text
+        request.post(
+            util.format(sopr_url, port, text, pcmPath),
+            function(error, response, body) {
+                if(!error && response.statusCode == 200) {
+                    console.log('%s was synthesized in %s', text, pcmPath);
+                    // Convert PCM to WAV
+                    exec(util.format(sox_command, pcmPath, wavPath),
+                    function(error, stdout, stderr) {
+                        console.log('%s was converted to %s', wavPath, pcmPath);
+                        if(error !== null) {
+                            console.log('ERROR: %s', error);
+                        } else {
+                            // Push file into queue
+                            var client = net.connect( {
+                                port: config.ls_telnet_port,
+                                host: config.ls_telnet_host
+                            }, function() {
+                                console.log('Connected to telnet client');
+                                client.write('request.push ' + wavPath + '\n', function() {
+                                    client.end();
+                                });
+                            });
+                            client.on('data', function(data) {
+                                //console.log('Received %s from telnet server', data.toString());
+                                client.end();
+                            });
+                            client.on('end', function() {
+                                console.log('Disconnected from telnet client');
+                            });
+                        }
+                    });
+                }
+            }
+        );
     }
 }
 
